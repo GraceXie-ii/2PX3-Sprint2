@@ -4,6 +4,8 @@ import numpy as np
 
 class Intersection:
     def __init__(self):
+        
+
         self.sim = Simulation()
         lane_space = 3.5
         intersection_size = 49
@@ -11,6 +13,12 @@ class Intersection:
         length = 43.75 #I have shortened the length of the entrance roads because vehicles base speeds are much lower because they are driving in a round about, however they would be able to drive faster in the entrance.
         radius = 18
 
+        self.vehicle_rate = 10
+        self.v = 17
+        self.speed_variance = 0
+        self.self_driving_vehicle_proportion = 0 #number between 0 and 1, 0 means no self driving vehicles, 1 means entirely self driving vehicles
+        if self.self_driving_vehicle_proportion == 1:
+            self.v = self.v * 1.5
         self.v = 8.5
 
         #entrance 0-3
@@ -67,7 +75,7 @@ class Intersection:
                 (1, {'path': [3,19,11,15,8,20,5],'v_max':self.v}),
                 (1, {'path': [3,19,11,15,8,12,9,21,6],'v_max':self.v}),
                 (1, {'path': [3, 19, 11,15,8,12,9,13,10,22,7],'v_max':self.v}),
-            ], 'vehicle_rate': 30
+            ], 'vehicle_rate' : self.vehicle_rate*(1-self.self_driving_vehicle_proportion)
         }
         
         )
