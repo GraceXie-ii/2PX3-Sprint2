@@ -13,10 +13,10 @@ class Intersection:
         length = 43.75 #I have shortened the length of the entrance roads because vehicles base speeds are much lower because they are driving in a round about, however they would be able to drive faster in the entrance.
         radius = 18
 
-        self.vehicle_rate = 10
-        self.v = 17
+        self.vehicle_rate = 15
+        self.v = 10
         self.speed_variance = 0
-        self.self_driving_vehicle_proportion = 0 #number between 0 and 1, 0 means no self driving vehicles, 1 means entirely self driving vehicles
+        self.self_driving_vehicle_proportion = 1 #number between 0 and 1, 0 means no self driving vehicles, 1 means entirely self driving vehicles
         if self.self_driving_vehicle_proportion == 1:
             self.v = self.v * 1.5
         self.v = 8.5
@@ -53,8 +53,6 @@ class Intersection:
         self.sim.create_quadratic_bezier_curve((-lane_space - island_width/2, radius),(-lane_space/2 - island_width/2,radius),(-lane_space/2 - island_width/2, intersection_size/2))
     
         self.vg = VehicleGenerator({
-
-
             'vehicles': [
                 (1, {'path': [0, 16, 8,20,5],'v_max':self.v}),
                 (1, {'path': [0, 16, 8,12,9,21,6],'v_max':self.v}),
@@ -76,14 +74,44 @@ class Intersection:
                 (1, {'path': [3,19,11,15,8,12,9,21,6],'v_max':self.v}),
                 (1, {'path': [3, 19, 11,15,8,12,9,13,10,22,7],'v_max':self.v}),
             ], 'vehicle_rate' : self.vehicle_rate*(1-self.self_driving_vehicle_proportion)
-        }
-        
-        )
+        })
+
+        self.sdvg = VehicleGenerator({
+ 
+            #The first variable: 1 defines the weight if the vehicle; the higher the weight the more likely that type of vehicle will generate
+            # 'path' defines the order of segments the vehicle will drive over
+            #'v_max' defines the fastest speed a vehicle can drive at
+            #'T' defines the raction time of the vehicle, the base is 1
+            #'s0' defines the shortest distance a vehicle is able to drive behind another vehicle
+            'vehicles': [
+            (1, {'path': [0, 16, 8,20,5],'v_max':self.v}),
+                (1, {'path': [0, 16, 8,12,9,21,6],'v_max':self.v}),
+                (1, {'path': [0, 16, 8,12,9,13,10,22,7],'v_max':self.v}),
+                (1, {'path': [0, 16, 8,12,9,13,10,14,11,23,4],'v_max':self.v}),
+
+                (1,{'path': [1, 17, 9, 21, 6],'v_max':self.v}),
+                (1, {'path': [1,17,9,13,10,22,7],'v_max':self.v}),
+                (1, {'path': [1, 17, 9,13,10,14,11,23,4],'v_max':self.v}),
+                (1, {'path': [1, 17, 9,13,10,14,11,15,8,20,5],'v_max':self.v}),
+
+                (1, {'path': [2, 18, 10, 22, 7],'v_max':self.v}),
+                (1, {'path': [2,18,10,14,11,23,4],'v_max':self.v}),
+                (1, {'path': [2,18,10,14,11,15,8,20,5],'v_max':self.v}),
+                (1, {'path': [2, 18, 10,14,11,15,8,12,9,21,6],'v_max':self.v}),
+                
+                (1, {'path': [3, 19, 11, 23, 4],'v_max':self.v}),
+                (1, {'path': [3,19,11,15,8,20,5],'v_max':self.v}),
+                (1, {'path': [3,19,11,15,8,12,9,21,6],'v_max':self.v}),
+                (1, {'path': [3, 19, 11,15,8,12,9,13,10,22,7],'v_max':self.v}),
+            ], 'vehicle_rate' : self.vehicle_rate*self.self_driving_vehicle_proportion 
+            })
         self.sim.define_interfearing_paths([0,16],[15,8],turn=True)
         self.sim.define_interfearing_paths([1,17],[12,9],turn=True)
         self.sim.define_interfearing_paths([2,18],[13,10],turn=True)
         self.sim.define_interfearing_paths([3,19],[14,11],turn=True)
         self.sim.add_vehicle_generator(self.vg)
+        self.sim.add_vehicle_generator(self.sdvg)
+
     
     def get_sim(self):
         return self.sim

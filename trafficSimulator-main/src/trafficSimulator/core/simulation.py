@@ -40,11 +40,7 @@ class Simulation:
 
     def add_vehicle_generator(self, gen):
         self.vehicle_generator.append(gen)
-  
-
-
-
-    
+      
     def create_vehicle(self, **kwargs):
         veh = Vehicle(kwargs)
         self.add_vehicle(veh)
